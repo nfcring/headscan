@@ -46,14 +46,13 @@ foreach(@ips){
     
     if($header_page =~ m/<div class="score_.*"><span>(\w{1})<\/span><\/div>/){
         $header_grade=$1;
-	print $header_grade . "\n";
     } else {
 	die("No header grade, something is wrong!");
     }
     
     my $html_middle = << "END";
     <tr>
-        <td><span class="$class">$_</span></td>
+        <td>$_</td>
         <td><a href="https://securityheaders.io/?q=https://$_%2F&hide=on&followRedirects=on" target="_blank" rel="nofollow">$header_grade</a></td>
     </tr>
 END
@@ -61,14 +60,14 @@ END
 print $fh $html_middle;
 
 }
-    
+    my $timestamp = localtime(time());
     my $end_run = time();
-    my $run_time = sprintf("%.1f",($end_run - $start_run)/60);
+    my $run_time = sprintf("%.1f",($end_run - $start_run));
     
     
     my $html_bottom = << "END";
     <tr>
-	<td colspan="2">Last updated: $timestamp, total runtime: $run_time minutes</td>
+	<td colspan="2">Last updated: $timestamp, total runtime: $run_time seconds</td>
      </tr>
     <tr>
        <td colspan="2">Based on securityheaders.io</td>
