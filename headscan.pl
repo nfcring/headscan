@@ -1,3 +1,5 @@
+#!/usr/bin/perl -w
+use strict;
 use WWW::Mechanize;
 use Date::Parse;
 use DateTime;
@@ -5,13 +7,13 @@ use DateTime;
 my $start_run = time();
 my $mech = WWW::Mechanize->new(autocheck => 1,
 			       ssl_opts => { verify_hostname => 0 } );
-
-#Read in the urls to the apps
 my $filename_working = '/uio/kant/div-ceres-u1/asbjornt/www_docs/headscan_tmp.html';
 my $filename_finished = '/uio/kant/div-ceres-u1/asbjornt/www_docs/headscan.html';
 my $apps_filename = "apps.txt";
+my $fh;
+my @ips;
 
-open(my $fh, '<:encoding(UTF-8)', $apps_filename)
+open($fh, '<:encoding(UTF-8)', $apps_filename)
     or die "Could not open file '$apps_filename' $!";
 
 while (my $row = <$fh>) {
@@ -19,9 +21,8 @@ while (my $row = <$fh>) {
     push(@ips,$row);
 }
 
-close $fh;
 
-open(my $fh, '>', $filename_working)
+open($fh, '>', $filename_working)
     or die "Could not open file '$filename_working' $!";
 
 my $html_top = << "END";
@@ -38,7 +39,6 @@ print $fh $html_top;
 chmod 0644,$filename_working;
 
 foreach(@ips){
-    print "Tester $_\n";
     my $header_grade="";
     my $header_url = "https://securityheaders.io/?q=https://$_%2F&hide=on&followRedirects=on";
     $mech->get($header_url);
