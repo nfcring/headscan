@@ -23,17 +23,30 @@ while (my $row = <$fh>) {
     push(@ips,$row);
 }
 
-
 open($fh, '>', $filename_working)
     or die "Could not open file '$filename_working' $!";
 
 my $html_top = << "END";
 <html>
-    <head><link rel='stylesheet' type='text/css' href='sslscan.css'></head>
+    <head>
+<style>
+    table {
+        font-size:30pt;
+      width:100%;
+      height:100%;
+        border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid black;
+  padding: 3px;
+}
+</style>
+    </head>
     <body>
       <table>
          <tr>
-           <th>URL</th></th><th>Header grade</th><th>Missing headers</th>
+           <th>URL</th></th><th>Grade</th><th>Missing Headers</th>
 END
 
 print $fh $html_top;
@@ -51,7 +64,7 @@ foreach(@ips){
     if($header_page =~ m/<div class="score_.*"><span>(\w+\+?)<\/span><\/div>/){
         $header_grade = $1;
     } else {
-	die("No header grade, something is wrong!");
+	$header_grade = "error";
     }
     
     while($header_page =~ m/<i class="fa fa-times"><\/i>(.*?)<\/li>/g){
