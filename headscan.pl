@@ -7,10 +7,12 @@ use DateTime;
 my $start_run = time();
 my $mech = WWW::Mechanize->new(autocheck => 1,
 			       ssl_opts => { verify_hostname => 0 } );
-my $filename_working = '/uio/kant/div-ceres-u1/asbjornt/www_docs/headscan_tmp.html';
-my $filename_finished = '/uio/kant/div-ceres-u1/asbjornt/www_docs/headscan.html';
+my $filename_working = 'headscan_tmp.html';
+my $filename_finished = 'headscan.html';
 my $apps_filename = "apps.txt";
 my $fh;
+my @missing_red;
+my @missing_orange;
 my @ips;
 
 open($fh, '<:encoding(UTF-8)', $apps_filename)
@@ -31,7 +33,7 @@ my $html_top = << "END";
     <body>
       <table>
          <tr>
-           <th>URL</th></th><th>Header grade</th>
+           <th>URL</th></th><th>Header grade</th><th>Missing headers</th>
 END
 
 print $fh $html_top;
@@ -39,21 +41,33 @@ print $fh $html_top;
 chmod 0644,$filename_working;
 
 foreach(@ips){
+    @missing_red=();
+    @missing_orange=();
     my $header_grade="";
     my $header_url = "https://securityheaders.io/?q=https://$_%2F&hide=on&followRedirects=on";
     $mech->get($header_url);
     my $header_page = $mech->content;
     
-    if($header_page =~ m/<div class="score_.*"><span>(\w{1})<\/span><\/div>/){
-        $header_grade=$1;
+    if($header_page =~ m/<div class="score_.*"><span>(\w+\+?)<\/span><\/div>/){
+        $header_grade = $1;
     } else {
 	die("No header grade, something is wrong!");
     }
     
+    while($header_page =~ m/<i class="fa fa-times"><\/i>(.*?)<\/li>/g){
+	push(@missing_red,$1);
+    } 
+
+    while($header_page =~ m/<li class="headerItem pill pill-orange"><i class="fa fa-question"><\/i>(.*)<\/li>/g){
+	push(@missing_orange,$1);
+    } 
+    
+    my $missing_result_red = join(" ",@missing_red);
+    my $missing_result_orange = join(" ",@missing_orange);
     my $html_middle = << "END";
     <tr>
         <td>$_</td>
-        <td><a href="https://securityheaders.io/?q=https://$_%2F&hide=on&followRedirects=on" target="_blank" rel="nofollow">$header_grade</a></td>
+        <td><a href="https://securityheaders.io/?q=https://$_%2F&hide=on&followRedirects=on" target="_blank" rel="nofollow">$header_grade</a></td><td><font size="5pt" color="red">$missing_result_red</font><font size="5" color="orange"> $missing_result_orange</td>
     </tr>
 END
 
@@ -67,10 +81,10 @@ print $fh $html_middle;
     
     my $html_bottom = << "END";
     <tr>
-	<td colspan="2">Last updated: $timestamp, total runtime: $run_time seconds</td>
+	<td colspan="3">Last updated: $timestamp, total runtime: $run_time seconds</td>
      </tr>
     <tr>
-       <td colspan="2">Based on securityheaders.io</td>
+       <td colspan="3">Based on securityheaders.io</td>
     </tr>
    </table>
   </body>
