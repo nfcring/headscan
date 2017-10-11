@@ -1,2 +1,1 @@
-app.vitnemalsportalen.no/vp
-sok.samordnaopptak.no
+example.com
