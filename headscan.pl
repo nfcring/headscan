@@ -97,7 +97,7 @@ print $fh $html_middle;
 	<td colspan="3">Last updated: $timestamp, total runtime: $run_time seconds</td>
      </tr>
     <tr>
-       <td colspan="3">Based on securityheaders.io</td>
+       <td colspan="3">Based on <a href="http://securityheaders.io">securityheaders.io</a></td>
     </tr>
    </table>
   </body>
@@ -112,4 +112,3 @@ close $fh;
 #Copy working file to prod file
 use File::Copy;
 move($filename_working,$filename_finished)
-	
