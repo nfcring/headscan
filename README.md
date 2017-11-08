@@ -16,7 +16,7 @@ applications. One url on each line.
 
 # Run the program
 perl headscan.pl
-Open the headscan.html in the headscan directory and see the results.
+Open headscan.html in a browser in the headscan directory and see the results.
 
 # Written by
 Asbjørn Reglund Thorsen
