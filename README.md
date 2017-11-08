@@ -1,6 +1,6 @@
 
 # Headscan
-Headscan uses securityheaders.io and scrapes the results from the
+Headscan is a proof of concept program which uses securityheaders.io. It scrapes the results from the
 website. The owner of securityheaders.io has accepted the scraping of
 data. When an API is made, this program will be rewritten.
 
